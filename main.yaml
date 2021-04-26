@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+
+  roles:
+    - rand_pwd
+
+...
