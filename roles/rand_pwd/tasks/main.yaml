@@ -1,0 +1,36 @@
+---
+
+
+  - add_host:
+      name: control
+      ansible_ssh_host: "{{ip_control}}"
+      ansible_ssh_user: "{{login_control}}"
+      ansible_ssh_pass: "{{passwd_control}}"
+
+  - set_fact:
+      password: "{{lookup('password', '/dev/null length=9 ')}}"
+
+  - name: Mise à jour des paquets
+    yum:
+      name: '*'
+      state: latest
+
+  - name: Installation de la dépendance python-passlib
+    yum:
+      name: python-passlib
+      state: present
+
+  - name: Changement mot de passe
+    user:
+      name: "{{u_name}}"
+      password: "{{hostvars[inventory_hostname].password | password_hash('sha512')}}"
+
+  - name: Ajout du mot de passe dans le fichier de la machine de contrôle
+    lineinfile:
+      create: yes
+      path: "{{dest_dir}}"
+      line: "{{inventory_hostname}}:{{u_name}}:{{hostvars[inventory_hostname].password }}"
+    delegate_to: control
+
+  - debug:
+      msg: "Mot de passe généré pour {{u_name}} sur {{inventory_hostname}} : {{hostvars[inventory_hostname].password }}"
