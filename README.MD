@@ -41,4 +41,4 @@ passwd_control: root
 
 ## Crédits
 
-Vincent Yucel, Planet Bourgogne, 2018.
+Vincent Yucel, 2018.
